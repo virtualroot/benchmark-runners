@@ -1,0 +1,35 @@
+on: [push, pull_request]
+
+jobs:
+  benchmark:
+    name: Benchmark
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        include:
+          - os: macos-latest
+            target: macos
+          - os: ubuntu-latest
+            target: ubuntu
+
+    steps:
+      - name: Install MacOS dependencies
+        if: matrix.target == 'macos'
+        run: |
+          brew update
+          brew install sysbench
+
+      - name: Install Ubuntu dependencies
+        if: matrix.target == 'ubuntu'
+        run: |
+          sudo apt update
+          sudo apt install sysbench
+
+      - name: Benchmark CPU
+        run: sysbench --test=cpu run
+
+      - name: Benchmark memory
+        run: sysbench --test=memory run
+
+      - name: Benchmark disk
+        run: sysbench --test=fileio --file-test-mode=seqwr run
