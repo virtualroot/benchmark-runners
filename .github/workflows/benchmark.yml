@@ -28,6 +28,14 @@ jobs:
       - name: Benchmark CPU
         run: sysbench --test=cpu run
 
+      - name: Benchmark CPU threads
+        if: matrix.target == 'macos'
+        run: sysbench --test=cpu --num-threads=3 run
+
+      - name: Benchmark CPU threads
+        if: matrix.target == 'ubuntu'
+        run: sysbench --test=cpu --num-threads=2 run
+
       - name: Benchmark memory
         run: sysbench --test=memory run
 
